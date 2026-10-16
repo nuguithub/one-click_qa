@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      Every scanner edge case in one page. Expected results are annotated in
+      comments next to each case so you can check the side panel against them.
+    -->
+    <title>QA Fixture Page</title>
+    <meta name="description" content="A short description." />
+    <link rel="canonical" href="https://example.com/qa-fixture" />
+    <meta name="robots" content="index, nofollow" />
+    <style>
+      body { font: 16px/1.6 system-ui, sans-serif; margin: 0 auto; max-width: 44rem; padding: 2rem 1rem; }
+      h1, h2, h3, h4 { scroll-margin-top: 1rem; }
+      .note { border-left: 3px solid #999; padding-left: .75rem; color: #555; font-size: .85rem; }
+    </style>
+  </head>
+  <body>
+    <h1>QA Fixture Page</h1>
+    <p class="note">
+      Serve this over http (<code>npm run serve</code>) - the extension does not run on
+      <code>file://</code> pages. Then click the toolbar icon.
+    </p>
+
+    <h2>Headings</h2>
+    <p class="note">
+      Expected: 1 H1, no skipped levels before "Skipped level" below, then one
+      <strong>skipped level</strong> (H2 followed by H4), then one <strong>empty</strong> heading.
+    </p>
+    <h3>Valid nesting</h3>
+    <h4>Valid nesting</h4>
+    <h2>Skipped level</h2>
+    <h4>Skipped straight from H2</h4>
+    <h2></h2>
+    <p>Text after the empty heading.</p>
+
+    <h2>Images</h2>
+    <p class="note">
+      Expected: one image with good alt text, one with an empty alt, one with no alt
+      attribute at all, and one whose alt is far too long.
+    </p>
+    <p>
+      <img src="test-assets/ok.png" alt="A blue square, correctly labelled" width="80" />
+      <img src="test-assets/ok.png" alt="" width="80" />
+      <img src="test-assets/ok.png" width="80" />
+      <img
+        src="test-assets/ok.png"
+        alt="This alt text is deliberately far longer than one hundred and twenty five characters so that the scanner flags it as keyword stuffing, which is the whole point of including an image like this one in the fixture page at all."
+        width="80"
+      />
+    </p>
+    <p>
+      <picture>
+        <source media="(min-width: 1px)" srcset="test-assets/ok.png" />
+        <img src="test-assets/ok.png" alt="Inside a picture element" width="80" />
+      </picture>
+    </p>
+
+    <h2>Links</h2>
+    <p class="note">
+      Part 1 checks the DOM. Part 2 sends the 10 checkable URLs below to the
+      background worker, which does the HTTP. Expected results, left to right:
+      <br />
+      &bull; <code>/</code> &rarr; <strong>200</strong> (green, same tab)
+      <br />
+      &bull; <code>/not-found</code> &rarr; <strong>404</strong>, new tab (yellow dot, then
+      turns red)
+      <br />
+      &bull; <code>/server-error</code> &rarr; <strong>500</strong> (red)
+      <br />
+      &bull; <code>/redirect-to?url=/test/fixture.html</code> &rarr;
+      <strong>302</strong> then 200
+      <br />
+      &bull; <code>/redirect-to?url=/not-found</code> &rarr; <strong>302</strong> then 404
+      <br />
+      &bull; <code>/head-not-allowed</code> &rarr; 405 on HEAD, so the checker retries with GET
+      and reports <strong>200</strong>
+      <br />
+      &bull; <code>*.invalid</code> host &rarr; DNS failure, so a <strong>network error</strong>
+      (also red)
+      <br />
+      &bull; <code>/slow</code> &rarr; no answer within 10s, so a <strong>timeout</strong> (also
+      red). Include this one last, because it adds 10 seconds.
+    </p>
+    <ul>
+      <li><a href="/">Working link</a></li>
+      <li><a href="/not-found" target="_blank">New tab, 404</a></li>
+      <li><a href="/server-error">Server error, 500</a></li>
+      <li><a href="/redirect-to?url=/test/fixture.html">Redirects to this page</a></li>
+      <li><a href="/redirect-to?url=/not-found">Redirects to a 404</a></li>
+      <li><a href="/head-not-allowed">405 on HEAD, 200 on GET</a></li>
+      <li><a href="http://does-not-exist-qa-test.invalid/">Unresolvable host</a></li>
+      <li><a href="/slow">Hangs, forces a timeout (adds 10s)</a></li>
+    </ul>
+
+    <h2>Link wording issues</h2>
+    <p class="note">
+      These are the four issues counted in part 1. The <code>rel="nofollow"</code> tag shows but
+      is not counted, and the <code>aria-label</code> anchor is deliberately <em>not</em> flagged.
+    </p>
+    <ul>
+      <li><a href="/not-found" rel="nofollow">nofollow tag</a></li>
+      <li><a href="#">Hash only</a></li>
+      <li><a href="javascript:void(0)">javascript void</a></li>
+      <li><a href="/ok" aria-label="Has an aria-label instead of text"></a></li>
+      <li><a href="/not-found"></a></li>
+      <li><a href="/not-found">click here</a></li>
+      <li><a href="mailto:hello@example.com">Mail me</a></li>
+      <li><a href="tel:+15551234567">Call me</a></li>
+    </ul>
+  </body>
+</html>

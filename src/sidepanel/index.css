@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Tailwind v4 auto-detects sources from the project. Pointing it explicitly
+   keeps builds fast and stops it from walking dist/ on every rebuild. */
+@source "../**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}";
+
+/*
+ * Tailwind v4's `dark:` variant already maps to `@media (prefers-color-scheme:
+ * dark)`, which is exactly the "follow the system setting" requirement - no
+ * toggle and no localStorage needed.
+ */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

@@ -1,0 +1,9 @@
+# Normalise line endings in the repository, so the same files check out
+# identically on Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Binary assets must never be touched.
+*.png binary
+*.jpg binary
+*.ico binary
+*.webp binary
